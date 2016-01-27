@@ -55,14 +55,6 @@
 # include <unistd.h>
 #endif /* HAVE_UNISTD_H */
 
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
-
-#ifdef HAVE_SYS_FCNTL_H
-# include <sys/fcntl.h>
-#endif
-
 #ifdef HAVE_SYS_FILE_H
 # include <sys/file.h>
 #endif
@@ -81,10 +73,6 @@
 
 #ifdef HAVE_LIMITS_H
 # include <limits.h>
-#endif
-
-#ifdef HAVE_TERMIOS_H
-# include <termios.h>
 #endif
 
 #ifndef PATH_MAX
@@ -115,19 +103,6 @@
 #include <arpa/inet.h>
 #endif
 
-#if defined(HAVE_SIGNAL_H)
-# include <signal.h>
-#endif
-#if defined(HAVE_SYS_SIGNAL_H)
-# include <sys/signal.h>
-#endif
-
-#ifdef NEED_SIG_PROTOTYPES
-int sigemptyset(sigset_t *);
-int sigaddset(sigset_t *, int);
-int sigprocmask (int, sigset_t *, sigset_t *);
-#endif
-
 #if HAVE_GETOPT_H
 # include <getopt.h>
 #endif
@@ -156,8 +131,6 @@ int sigprocmask (int, sigset_t *, sigset_t *);
 #endif
 
 #include <radcli/radcli.h>
-
-#define GETSTR_LENGTH		128	//!< must be bigger than AUTH_PASS_LEN.
 
 typedef struct pw_auth_hdr
 {

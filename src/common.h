@@ -10,7 +10,6 @@
 
 #include <freeradius-client.h>
 
-char *rc_getstr (rc_handle *rh, char const *prompt, int do_echo);
 char * rc_fgetln(FILE *fp, size_t *len);
 
 #endif

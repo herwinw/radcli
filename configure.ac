@@ -71,10 +71,9 @@ AC_C_BIGENDIAN
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(signal.h sys/signal.h sys/stat.h)
-AC_CHECK_HEADERS(fcntl.h sys/fcntl.h)
+AC_CHECK_HEADERS(sys/stat.h)
 AC_CHECK_HEADERS(sys/utsname.h getopt.h unistd.h)
-AC_CHECK_HEADERS(sys/file.h termios.h sys/ioctl.h)
+AC_CHECK_HEADERS(sys/file.h sys/ioctl.h)
 AC_CHECK_HEADERS(netdb.h syslog.h pwd.h)
 AC_CHECK_HEADERS(sys/socket.h netinet/in.h arpa/inet.h)
 if test "$shadow_passwords" = "yes"
@@ -92,11 +91,10 @@ AC_STRUCT_TM
 
 dnl Checks for library functions.
 AC_FUNC_MEMCMP
-AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_ALLOCA
 AC_REPLACE_FUNCS(strdup strerror strcasecmp)
-AC_CHECK_FUNCS(fcntl uname gethostname sysinfo getdomainname)
+AC_CHECK_FUNCS(uname gethostname sysinfo getdomainname)
 AC_CHECK_FUNCS(random rand snprintf vsnprintf strlcpy)
 
 AC_CHECK_FUNCS([pthread_mutex_lock],,)
@@ -224,8 +222,6 @@ AH_OUTPUT([HAVE_SHADOW_PASSWORDS], [/* shadow password support */
 #undef HAVE_SHADOW_PASSWORDS])
 AH_OUTPUT([HAVE_STRUCT_UTSNAME_DOMAINNAME], [/*struct utsname has domainname field */
 #undef HAVE_STRUCT_UTSNAME_DOMAINNAME])
-AH_OUTPUT([NEED_SIG_PROTOTYPES], [/* do you need the sig* prototypes ? */
-#undef NEED_SIG_PROTOTYPES])
 AH_OUTPUT([PACKAGE], [
 #undef PACKAGE])
 AH_OUTPUT([VERSION], [
