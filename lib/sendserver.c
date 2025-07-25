@@ -858,10 +858,52 @@ int rc_send_server_ctx(rc_handle * rh, RC_AAA_CTX ** ctx, SEND_DATA * data,
 		goto cleanup;
 	}
 
+	if (msg) {
+		*msg = '\0';
+		pos = 0;
+		if ((vp = rc_avpair_get(data->receive_pairs, PW_MESSAGE_AUTHENTICATOR, 0))) {
+			uint8_t received_message_authenticator[16];
+			uint8_t verify_buffer[RC_BUFFER_LEN];
+			size_t idx = AUTH_HDR_LEN;
+
+			memcpy(received_message_authenticator, vp->strvalue, 16);
+
+			memset(verify_buffer, 0, sizeof(verify_buffer));
+			memcpy(verify_buffer, recv_buffer, AUTH_HDR_LEN);
+			for (vp = data->receive_pairs; vp != NULL; vp = vp->next) {
+				verify_buffer[idx] = vp->attribute;
+				idx += 1;
+				verify_buffer[idx] = vp->lvalue + 2;
+				idx += 1;
+				if (vp->attribute != PW_MESSAGE_AUTHENTICATOR)
+					memcpy(verify_buffer + idx, vp->strvalue, vp->lvalue);
+				idx += vp->lvalue;
+			}
+			// Copied fom add_msg_auth_attr
+			uint8_t digest[MD5_DIGEST_SIZE];
+			rc_hmac_md5((uint8_t *)verify_buffer, (size_t)length + AUTH_HDR_LEN, (uint8_t *)secret, strlen(secret), digest);
+			if (memcmp(received_message_authenticator, digest, 16)) {
+				rc_log(LOG_ERR,
+				       "rc_send_server: recvfrom: %s:%d: received attribute Message-Authenticator is incorrect",
+				       server_name, data->svc_port);
+				memset(secret, '\0', sizeof(secret));
+				result = ERROR_RC;
+				goto cleanup;
+			}
+		} else {
+			// No Message-Authenticator attribute, should use a config option to make it possible to accept
+			rc_log(LOG_ERR,
+			       "rc_send_server: recvfrom: %s:%d: required attribute Message-Authenticator is missing",
+			       server_name, data->svc_port);
+			memset(secret, '\0', sizeof(secret));
+			result = ERROR_RC;
+			goto cleanup;
+		}
+	}
+
 	memset(secret, '\0', sizeof(secret));
 
 	if (msg) {
-		*msg = '\0';
 		pos = 0;
 		vp = data->receive_pairs;
 		while (vp) {
